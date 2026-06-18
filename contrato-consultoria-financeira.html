@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contrato de Prestação de Serviços – Consultoria e Auditoria Financeira</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --verde:#0F6E56;--verde-claro:#1D9E75;--verde-bg:#E1F5EE;--verde-borda:#9FE1CB;
+  --areia:#FAF8F4;--branco:#fff;--preto:#1a1a1a;--cinza:#5F5E5A;--cinza-claro:#F1EFE8;
+  --borda:#E0DBD2;
+}
+body{font-family:'DM Sans',sans-serif;color:var(--preto);background:var(--areia);min-height:100vh}
+
+.header{background:var(--verde);padding:18px 5%;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:#fff;letter-spacing:-0.3px}
+.logo span{font-style:italic;opacity:0.8;font-size:14px;font-weight:400;display:block;margin-top:2px}
+.header-tag{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:100px}
+
+.container{max-width:860px;margin:0 auto;padding:40px 20px 80px}
+
+.steps{display:flex;align-items:center;gap:0;margin-bottom:40px;background:#fff;border:1px solid var(--borda);border-radius:12px;overflow:hidden}
+.step-item{flex:1;padding:14px 12px;text-align:center;font-size:13px;font-weight:500;color:var(--cinza);cursor:pointer;transition:all 0.2s;position:relative;border-right:1px solid var(--borda)}
+.step-item:last-child{border-right:none}
+.step-item.active{background:var(--verde);color:#fff;font-weight:600}
+.step-item.done{background:var(--verde-bg);color:var(--verde);font-weight:600}
+.step-num{display:block;font-size:11px;opacity:0.6;margin-bottom:2px}
+
+.panel{display:none;animation:fadeIn 0.3s ease}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.card{background:#fff;border:1px solid var(--borda);border-radius:16px;padding:32px;margin-bottom:20px}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:4px;color:var(--preto)}
+.card-sub{font-size:14px;color:var(--cinza);margin-bottom:24px}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-row.full{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+label{font-size:13px;font-weight:600;color:var(--preto)}
+input,select,textarea{border:1.5px solid var(--borda);border-radius:8px;padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--preto);background:#fff;transition:border 0.2s;outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--verde)}
+input::placeholder{color:#bbb}
+.form-hint{font-size:12px;color:var(--cinza);margin-top:3px}
+.req{color:#e53e3e;margin-left:2px}
+
+.empresas-list{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
+.empresa-card{border:1.5px solid var(--borda);border-radius:12px;padding:18px;position:relative;background:var(--areia)}
+.empresa-card .empresa-num{position:absolute;top:-11px;left:16px;background:var(--verde);color:#fff;font-size:11px;font-weight:700;padding:3px 12px;border-radius:100px}
+.empresa-remove{position:absolute;top:12px;right:12px;background:#FEE2E2;color:#DC2626;border:none;border-radius:6px;width:24px;height:24px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.empresa-remove:hover{background:#DC2626;color:#fff}
+.btn-add-empresa{width:100%;border:2px dashed var(--verde-borda);background:var(--verde-bg);color:var(--verde);border-radius:12px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.btn-add-empresa:hover{background:var(--verde-borda);color:#fff}
+
+.total-box{background:var(--verde-bg);border:1px solid var(--verde-borda);border-radius:12px;padding:18px 22px;margin-top:8px;display:flex;align-items:center;justify-content:space-between}
+.total-label{font-size:14px;color:var(--verde);font-weight:600}
+.total-value{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--verde)}
+.total-detail{font-size:12px;color:var(--cinza);margin-top:4px}
+
+.contract-text{background:var(--areia);border:1px solid var(--borda);border-radius:10px;padding:24px;font-size:13px;line-height:1.8;color:#3a3a3a;max-height:420px;overflow-y:auto}
+.contract-text h3{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;margin:18px 0 8px;color:var(--preto)}
+.contract-text h3:first-child{margin-top:0}
+.contract-text p{margin-bottom:8px}
+.contract-text ul{margin:6px 0 10px 18px}
+.contract-text ul li{margin-bottom:4px}
+.contract-text strong{font-weight:600;color:var(--preto)}
+.contract-text .highlight{background:rgba(15,110,86,0.08);border-left:3px solid var(--verde);padding:10px 14px;border-radius:0 6px 6px 0;margin:10px 0}
+.contract-text table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px}
+.contract-text table th{background:var(--verde-bg);color:var(--verde);text-align:left;padding:6px 10px;font-weight:600}
+.contract-text table td{padding:6px 10px;border-bottom:1px solid #f0ede8}
+.contract-text::-webkit-scrollbar{width:5px}
+.contract-text::-webkit-scrollbar-track{background:#f0ede8}
+.contract-text::-webkit-scrollbar-thumb{background:var(--verde-borda);border-radius:10px}
+
+.sig-tabs{display:flex;gap:8px;margin-bottom:18px}
+.sig-tab{padding:9px 20px;border-radius:8px;border:1.5px solid var(--borda);font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:var(--cinza);transition:all 0.2s}
+.sig-tab.active{background:var(--verde);color:#fff;border-color:var(--verde)}
+
+.canvas-container{position:relative;border:2px dashed var(--borda);border-radius:10px;background:#fafafa;overflow:hidden;height:180px}
+.canvas-container canvas{width:100%;height:100%;touch-action:none;cursor:crosshair;display:block}
+.canvas-placeholder{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;color:#bbb;pointer-events:none;text-align:center}
+.canvas-placeholder svg{display:block;margin:0 auto 6px;opacity:0.3}
+
+.sig-typed-input{font-size:24px;font-family:'Cormorant Garamond',serif;border:2px dashed var(--borda);border-radius:10px;padding:20px;width:100%;text-align:center;background:#fafafa;color:var(--preto);height:80px}
+.sig-typed-input:focus{border-color:var(--verde);outline:none}
+
+.sig-models{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sig-model{border:2px solid var(--borda);border-radius:10px;padding:14px 10px;cursor:pointer;text-align:center;transition:all 0.2s;background:#fafafa}
+.sig-model:hover{border-color:var(--verde-borda);background:var(--verde-bg)}
+.sig-model.selected{border-color:var(--verde);background:var(--verde-bg)}
+.sig-model span{font-size:22px;display:block;margin-bottom:4px;line-height:1.2}
+.sig-model small{font-size:10px;color:var(--cinza);font-weight:500}
+
+.clear-btn{background:none;border:none;color:var(--cinza);font-size:12px;cursor:pointer;margin-top:8px;padding:4px 8px;text-decoration:underline;font-family:'DM Sans',sans-serif}
+.clear-btn:hover{color:var(--preto)}
+
+.summary-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0ede8;font-size:14px}
+.summary-row:last-child{border-bottom:none;font-weight:700;font-size:15px;color:var(--verde)}
+.summary-label{color:var(--cinza)}
+
+.agree-box{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--verde-bg);border:1px solid var(--verde-borda);border-radius:10px;cursor:pointer}
+.agree-box input[type=checkbox]{width:18px;height:18px;min-width:18px;accent-color:var(--verde);cursor:pointer;margin-top:1px}
+.agree-box label{font-size:13px;color:var(--preto);cursor:pointer;line-height:1.5}
+
+.btn-row{display:flex;justify-content:flex-end;gap:12px;margin-top:24px}
+.btn-back{background:none;border:2px solid var(--borda);color:var(--cinza);padding:12px 24px;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.btn-back:hover{border-color:var(--verde);color:var(--verde)}
+.btn-next{background:var(--verde);color:#fff;padding:12px 28px;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;gap:8px}
+.btn-next:hover{background:var(--verde-claro)}
+.btn-next:disabled{background:#ccc;cursor:not-allowed}
+
+.success-screen{text-align:center;padding:48px 20px}
+.success-icon{width:80px;height:80px;background:var(--verde-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:36px}
+.success-screen h2{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;margin-bottom:12px}
+.success-screen p{font-size:15px;color:var(--cinza);max-width:440px;margin:0 auto 28px;line-height:1.7}
+.download-btn{background:var(--verde);color:#fff;padding:14px 28px;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:8px}
+.download-btn:hover{background:var(--verde-claro)}
+.contract-id{background:var(--cinza-claro);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--cinza);display:inline-block;margin-top:16px;font-weight:600}
+
+@media(max-width:640px){
+  .form-row{grid-template-columns:1fr}
+  .sig-models{grid-template-columns:1fr 1fr}
+  .steps{display:none}
+  .btn-row{flex-direction:column-reverse}
+  .btn-next,.btn-back{width:100%;justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">caroline<span>consultoria & auditoria financeira</span></div>
+  <div class="header-tag">Contrato Digital</div>
+</div>
+
+<div class="container">
+
+  <div class="steps" id="stepBar">
+    <div class="step-item active" data-step="1"><span class="step-num">01</span>Seus dados</div>
+    <div class="step-item" data-step="2"><span class="step-num">02</span>Empresas</div>
+    <div class="step-item" data-step="3"><span class="step-num">03</span>Contrato</div>
+    <div class="step-item" data-step="4"><span class="step-num">04</span>Assinatura</div>
+  </div>
+
+  <div class="panel active" id="panel1">
+    <div class="card">
+      <div class="card-title">Dados do Contratante</div>
+      <div class="card-sub">Preencha as informações da pessoa ou empresa que está contratando os serviços de consultoria.</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome completo / Razão Social <span class="req">*</span></label>
+          <input type="text" id="nomeCliente" placeholder="Ex: João Silva" required>
+        </div>
+        <div class="form-group">
+          <label>CPF / CNPJ <span class="req">*</span></label>
+          <input type="text" id="docCliente" placeholder="000.000.000-00" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>E-mail <span class="req">*</span></label>
+          <input type="email" id="emailCliente" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label>Telefone / WhatsApp <span class="req">*</span></label>
+          <input type="text" id="telCliente" placeholder="(31) 99999-0000" required>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Endereço completo <span class="req">*</span></label>
+          <input type="text" id="endCliente" placeholder="Rua, número, bairro, cidade/UF" required>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goStep(2)">Próximo: Empresas para consultoria →</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel2">
+    <div class="card">
+      <div class="card-title">Empresas para Consultoria</div>
+      <div class="card-sub">Adicione cada empresa que receberá consultoria e auditoria financeira. Cada empresa adicionada custa <strong>R$ 1.000,00/mês</strong>.</div>
+
+      <div class="empresas-list" id="empresasList"></div>
+
+      <button class="btn-add-empresa" onclick="adicionarEmpresa()">+ Adicionar empresa</button>
+
+      <div class="total-box" id="totalBox" style="display:none">
+        <div>
+          <div class="total-label">Valor mensal total</div>
+          <div class="total-detail" id="totalDetail"></div>
+        </div>
+        <div class="total-value" id="totalValue">R$ 0,00</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(1)">← Voltar</button>
+      <button class="btn-next" onclick="goStep(3)">Próximo: Ver contrato →</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel3">
+    <div class="card">
+      <div class="card-title">Contrato de Prestação de Serviços</div>
+      <div class="card-sub">Leia o contrato completo antes de prosseguir com a assinatura.</div>
+      <div class="contract-text" id="contractText"></div>
+      <div style="margin-top:18px">
+        <div class="agree-box" onclick="toggleAgree()">
+          <input type="checkbox" id="agreeCheck">
+          <label for="agreeCheck">Li e concordo integralmente com os termos e condições deste contrato de prestação de serviços.</label>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(2)">← Voltar</button>
+      <button class="btn-next" id="btnSign" onclick="goStep(4)" disabled>Assinar contrato →</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel4">
+    <div class="card">
+      <div class="card-title">Assinatura Digital</div>
+      <div class="card-sub">Assine o contrato digitalmente. Escolha como prefere assinar.</div>
+
+      <div class="sig-tabs">
+        <button class="sig-tab active" onclick="setTab('draw')">✍️ Assinar à mão livre</button>
+        <button class="sig-tab" onclick="setTab('type')">⌨️ Digitar nome</button>
+        <button class="sig-tab" onclick="setTab('model')">🔤 Escolher modelo</button>
+      </div>
+
+      <div id="tabDraw">
+        <div class="canvas-container">
+          <canvas id="sigCanvas"></canvas>
+          <div class="canvas-placeholder" id="canvasHint">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            Assine aqui com o mouse ou dedo
+          </div>
+        </div>
+        <button class="clear-btn" onclick="clearCanvas()">Limpar assinatura</button>
+      </div>
+
+      <div id="tabType" style="display:none">
+        <input type="text" class="sig-typed-input" id="typedSig" placeholder="Digite seu nome completo" oninput="renderTyped(this.value)">
+        <canvas id="typedCanvas" style="display:none"></canvas>
+      </div>
+
+      <div id="tabModel" style="display:none">
+        <p style="font-size:13px;color:var(--cinza);margin-bottom:14px">Selecione um estilo de assinatura para o seu nome</p>
+        <div class="sig-models" id="sigModels"></div>
+        <canvas id="modelCanvas" style="display:none"></canvas>
+      </div>
+    </div>
+
+    <div class="card" id="summaryCard">
+      <div class="card-title">Resumo da Contratação</div>
+      <div id="summaryContent"></div>
+    </div>
+
+    <div class="card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Local e data da assinatura</label>
+          <input type="text" id="localAssinatura" placeholder="Nova União/MG">
+        </div>
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" id="dataAssinatura">
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(3)">← Voltar</button>
+      <button class="btn-next" onclick="finalizar()">✅ Finalizar e baixar PDF</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panelSuccess">
+    <div class="card">
+      <div class="success-screen">
+        <div class="success-icon">✅</div>
+        <h2>Contrato assinado com sucesso!</h2>
+        <p>Seu contrato foi gerado e está pronto para download.</p>
+        <button class="download-btn" onclick="downloadPDF()">⬇️ Baixar contrato em PDF</button>
+        <br>
+        <div class="contract-id" id="contractIdDisplay"></div>
+        <br>
+        <div style="display:flex;justify-content:center;gap:32px;margin:16px auto;max-width:500px;flex-wrap:wrap">
+          <div style="text-align:center;border-top:1.5px solid #ccc;padding-top:10px;min-width:180px">
+            <img id="previewClienteSig" style="height:54px;max-width:200px;display:block;margin:0 auto 6px">
+            <div style="font-size:12px;color:#888">Assinatura do Contratante</div>
+          </div>
+          <div style="text-align:center;border-top:1.5px solid #ccc;padding-top:10px;min-width:180px">
+            <img id="previewCarolineSig" style="height:54px;max-width:200px;display:block;margin:0 auto 6px">
+            <div style="font-size:12px;color:#888">Assinatura da Contratada</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+const state = {
+  step: 1,
+  empresas: [],
+  sigMode: 'draw',
+  sigData: null,
+  agreed: false
+};
+
+const VALOR_POR_EMPRESA = 1000;
+
+function adicionarEmpresa() {
+  const id = Date.now();
+  state.empresas.push({ id, nome: '', horasDia: '' });
+  renderEmpresas();
+}
+window.adicionarEmpresa = adicionarEmpresa;
+
+function removerEmpresa(id) {
+  state.empresas = state.empresas.filter(e => e.id !== id);
+  renderEmpresas();
+}
+window.removerEmpresa = removerEmpresa;
+
+function atualizarEmpresa(id, campo, valor) {
+  const emp = state.empresas.find(e => e.id === id);
+  if (emp) emp[campo] = valor;
+  atualizarTotal();
+}
+window.atualizarEmpresa = atualizarEmpresa;
+
+function renderEmpresas() {
+  const container = document.getElementById('empresasList');
+  if (state.empresas.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--cinza);font-size:13px">Nenhuma empresa adicionada ainda. Clique no botão abaixo para começar.</div>';
+  } else {
+    container.innerHTML = state.empresas.map((e, i) => `
+      <div class="empresa-card">
+        <div class="empresa-num">Empresa ${i+1}</div>
+        <button class="empresa-remove" onclick="removerEmpresa(${e.id})">✕</button>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-group">
+            <label>Nome da empresa <span class="req">*</span></label>
+            <input type="text" placeholder="Ex: Comércio ABC Ltda" value="${e.nome}" oninput="atualizarEmpresa(${e.id}, 'nome', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Horas de consultoria por dia</label>
+            <input type="number" min="1" max="12" placeholder="Ex: 2" value="${e.horasDia}" oninput="atualizarEmpresa(${e.id}, 'horasDia', this.value)">
+            <div class="form-hint">Apenas referência de escopo — não altera o valor mensal</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  atualizarTotal();
+}
+
+function atualizarTotal() {
+  const total = state.empresas.length * VALOR_POR_EMPRESA;
+  const box = document.getElementById('totalBox');
+  if (state.empresas.length > 0) {
+    box.style.display = 'flex';
+    document.getElementById('totalValue').textContent = 'R$ ' + total.toLocaleString('pt-BR') + ',00';
+    document.getElementById('totalDetail').textContent = state.empresas.length + ' empresa(s) × R$ 1.000,00/mês';
+  } else {
+    box.style.display = 'none';
+  }
+}
+
+renderEmpresas();
+
+function goStep(n) {
+  if (n === 2 && !validateStep1()) return;
+  if (n === 3) {
+    if (state.empresas.length === 0) { alert('Adicione pelo menos uma empresa para a consultoria.'); return; }
+    const semNome = state.empresas.some(e => !e.nome.trim());
+    if (semNome) { alert('Preencha o nome de todas as empresas adicionadas.'); return; }
+    buildContract();
+  }
+  if (n === 4) {
+    if (!state.agreed) { alert('Você precisa concordar com os termos do contrato.'); return; }
+    buildSummary();
+    buildSigModels();
+    document.getElementById('dataAssinatura').valueAsDate = new Date();
+  }
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel' + n).classList.add('active');
+  document.querySelectorAll('.step-item').forEach(s => {
+    const sn = parseInt(s.dataset.step);
+    s.classList.remove('active','done');
+    if (sn === n) s.classList.add('active');
+    else if (sn < n) s.classList.add('done');
+  });
+  state.step = n;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+window.goStep = goStep;
+
+function validateStep1() {
+  const fields = ['nomeCliente','docCliente','emailCliente','telCliente','endCliente'];
+  for (const f of fields) {
+    if (!document.getElementById(f).value.trim()) {
+      alert('Preencha todos os campos obrigatórios.');
+      document.getElementById(f).focus();
+      return false;
+    }
+  }
+  return true;
+}
+
+function toggleAgree() {
+  const checked = document.getElementById('agreeCheck').checked;
+  document.getElementById('agreeCheck').checked = !checked;
+  state.agreed = !checked;
+  document.getElementById('btnSign').disabled = !state.agreed;
+}
+window.toggleAgree = toggleAgree;
+
+function buildContract() {
+  const nome = document.getElementById('nomeCliente').value;
+  const doc = document.getElementById('docCliente').value;
+  const email = document.getElementById('emailCliente').value;
+  const end = document.getElementById('endCliente').value;
+  const total = state.empresas.length * VALOR_POR_EMPRESA;
+  const hoje = new Date().toLocaleDateString('pt-BR');
+
+  const empresasRows = state.empresas.map((e, i) =>
+    '<tr><td>' + (i+1) + '</td><td>' + e.nome + '</td><td>' + (e.horasDia ? e.horasDia + 'h/dia' : '—') + '</td><td>R$ 1.000,00/mês</td></tr>'
+  ).join('');
+
+  document.getElementById('contractText').innerHTML = `
+<h3>CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE CONSULTORIA E AUDITORIA FINANCEIRA</h3>
+<p><strong>Contrato nº:</strong> CAF-${Date.now().toString().slice(-6)}&nbsp;&nbsp;&nbsp;<strong>Data:</strong> ${hoje}</p>
+
+<h3>CLÁUSULA 1 – DAS PARTES</h3>
+<p><strong>CONTRATADA:</strong> Caroline Inacia Pinto, inscrita no CNPJ sob o nº <strong>61.934.682/0001-02</strong>, com sede na Rua F, 322, Sol Nascente, Nova União/MG, doravante denominada CONTRATADA.</p>
+<p><strong>CONTRATANTE:</strong> ${nome}, portador(a) do CPF/CNPJ nº ${doc}, e-mail ${email}, endereço ${end}, doravante denominado(a) CONTRATANTE.</p>
+
+<h3>CLÁUSULA 2 – DO OBJETO</h3>
+<p>O presente contrato tem por objeto a prestação de serviços de <strong>consultoria e auditoria financeira</strong> pela CONTRATADA às empresas indicadas pelo CONTRATANTE, conforme tabela abaixo:</p>
+<table>
+<tr><th>#</th><th>Empresa</th><th>Carga horária de referência</th><th>Valor mensal</th></tr>
+${empresasRows}
+</table>
+<p>Os serviços incluem, conforme escopo definido com cada empresa: análise de demonstrações financeiras, revisão de processos contábeis e fiscais, identificação de inconsistências, recomendações de melhoria de controles internos e acompanhamento periódico dos indicadores financeiros.</p>
+
+<h3>CLÁUSULA 3 – DO VALOR E FORMA DE PAGAMENTO</h3>
+<p><strong>Valor por empresa:</strong> R$ 1.000,00 (um mil reais) por mês, independentemente da carga horária de referência informada.</p>
+<p><strong>Quantidade de empresas contratadas:</strong> ${state.empresas.length}</p>
+<div class="highlight">💳 <strong>Valor mensal total:</strong> R$ ${total.toLocaleString('pt-BR')},00 — cobrado ao <strong>final de cada ciclo mensal</strong>, via Pix, boleto ou cartão de crédito.</div>
+<p>A carga horária de referência informada para cada empresa não altera o valor cobrado, servindo apenas como parâmetro de planejamento do escopo de trabalho.</p>
+
+<h3>CLÁUSULA 4 – DA VIGÊNCIA E RENOVAÇÃO</h3>
+<p>O contrato vigorará por prazo indeterminado a partir da data de assinatura, renovando-se automaticamente mês a mês.</p>
+
+<h3>CLÁUSULA 5 – DO CANCELAMENTO</h3>
+<div class="highlight"><strong>Cancelamento:</strong> Qualquer das partes pode encerrar o contrato, integralmente ou em relação a uma ou mais empresas específicas, mediante aviso prévio de <strong>15 (quinze) dias</strong>, sem multa rescisória, por escrito via e-mail ou WhatsApp.</div>
+
+<h3>CLÁUSULA 5-A – DO REAJUSTE ANUAL</h3>
+<p>O valor por empresa poderá ser reajustado anualmente, após <strong>12 (doze) meses</strong> de contrato ativo, com base na variação acumulada do <strong>IPCA</strong> dos últimos 12 meses, divulgado pelo IBGE.</p>
+<div class="highlight">A CONTRATADA comunicará o reajuste com antecedência mínima de <strong>30 (trinta) dias</strong>. Caso o CONTRATANTE não concorde, poderá cancelar o contrato conforme a Cláusula 5, sem multa.</div>
+
+<h3>CLÁUSULA 6 – DAS OBRIGAÇÕES DA CONTRATADA</h3>
+<ul>
+<li>Realizar a consultoria e auditoria financeira com diligência técnica e profissional;</li>
+<li>Manter sigilo absoluto sobre as informações financeiras e contábeis de cada empresa;</li>
+<li>Emitir relatórios e recomendações por escrito sempre que solicitado;</li>
+<li>Comunicar ao CONTRATANTE qualquer inconsistência relevante identificada durante os trabalhos.</li>
+</ul>
+
+<h3>CLÁUSULA 7 – DAS OBRIGAÇÕES DO CONTRATANTE</h3>
+<ul>
+<li>Fornecer acesso a documentos, sistemas e informações financeiras necessárias à execução dos serviços;</li>
+<li>Manter o pagamento em dia conforme periodicidade acordada;</li>
+<li>Informar com antecedência qualquer alteração na quantidade de empresas atendidas;</li>
+<li>Disponibilizar interlocutor responsável em cada empresa para acompanhamento dos trabalhos.</li>
+</ul>
+
+<h3>CLÁUSULA 8 – DA CONFIDENCIALIDADE</h3>
+<p>A CONTRATADA compromete-se a tratar todas as informações financeiras, contábeis e estratégicas das empresas com absoluto sigilo, utilizando-as exclusivamente para a execução dos serviços contratados, em conformidade com a Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018).</p>
+
+<h3>CLÁUSULA 9 – DA LIMITAÇÃO DE RESPONSABILIDADE</h3>
+<p>A CONTRATADA não se responsabiliza por decisões financeiras, contábeis ou estratégicas tomadas pelo CONTRATANTE ou pelas empresas com base nas recomendações apresentadas, tampouco por informações incorretas ou incompletas fornecidas pelas empresas auditadas.</p>
+
+<h3>CLÁUSULA 10 – DO FORO</h3>
+<p>As partes elegem o foro da Comarca de Belo Horizonte/MG para dirimir quaisquer controvérsias decorrentes deste instrumento, com renúncia a qualquer outro, por mais privilegiado que seja.</p>
+
+<p style="margin-top:20px;font-size:12px;color:#888">Documento gerado eletronicamente | Caroline Inacia Pinto | CNPJ 61.934.682/0001-02</p>
+  `;
+}
+
+function buildSummary() {
+  const total = state.empresas.length * VALOR_POR_EMPRESA;
+  const empresasRows = state.empresas.map((e) =>
+    '<div class="summary-row"><span class="summary-label">' + e.nome + (e.horasDia ? ' (' + e.horasDia + 'h/dia)' : '') + '</span><span>R$ 1.000,00/mês</span></div>'
+  ).join('');
+
+  document.getElementById('summaryContent').innerHTML = `
+    <div class="summary-row"><span class="summary-label">Contratante</span><span>${document.getElementById('nomeCliente').value}</span></div>
+    <div class="summary-row"><span class="summary-label">Quantidade de empresas</span><span>${state.empresas.length}</span></div>
+    ${empresasRows}
+    <div class="summary-row" style="border-top:2px solid #e0dbd2;margin-top:4px;padding-top:14px">
+      <span>Total mensal</span>
+      <span>R$ ${total.toLocaleString('pt-BR')},00/mês</span>
+    </div>
+  `;
+}
+
+const SIG_FONTS = [
+  { label: 'Clássica', font: 'Georgia, serif', style: 'normal' },
+  { label: 'Cursiva', font: "'Brush Script MT', cursive", style: 'italic' },
+  { label: 'Elegante', font: "'Palatino Linotype', serif", style: 'italic' },
+  { label: 'Moderna', font: "Garamond, serif", style: 'normal' },
+  { label: 'Serifada', font: "'Times New Roman', serif", style: 'italic' },
+  { label: 'Formal', font: "'Book Antiqua', serif", style: 'normal' }
+];
+
+let isDrawing = false, lastX = 0, lastY = 0;
+
+function initCanvas() {
+  const canvas = document.getElementById('sigCanvas');
+  const container = canvas.parentElement;
+  canvas.width = container.offsetWidth;
+  canvas.height = container.offsetHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    if (e.touches) return [(e.touches[0].clientX - rect.left) * scaleX, (e.touches[0].clientY - rect.top) * scaleY];
+    return [(e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY];
+  }
+
+  canvas.addEventListener('mousedown', e => { isDrawing = true; [lastX, lastY] = getPos(e); document.getElementById('canvasHint').style.display='none'; });
+  canvas.addEventListener('mousemove', e => {
+    if (!isDrawing) return;
+    const [x, y] = getPos(e);
+    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+    [lastX, lastY] = [x, y];
+  });
+  canvas.addEventListener('mouseup', () => { isDrawing = false; state.sigData = canvas.toDataURL(); });
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); isDrawing = true; [lastX, lastY] = getPos(e); document.getElementById('canvasHint').style.display='none'; }, {passive:false});
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const [x, y] = getPos(e);
+    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+    [lastX, lastY] = [x, y];
+  }, {passive:false});
+  canvas.addEventListener('touchend', () => { isDrawing = false; state.sigData = canvas.toDataURL(); });
+}
+
+function clearCanvas() {
+  const canvas = document.getElementById('sigCanvas');
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  state.sigData = null;
+  document.getElementById('canvasHint').style.display = 'block';
+}
+window.clearCanvas = clearCanvas;
+
+function setTab(tab) {
+  state.sigMode = tab;
+  document.querySelectorAll('.sig-tab').forEach((t, i) => t.classList.toggle('active', ['draw','type','model'][i] === tab));
+  document.getElementById('tabDraw').style.display = tab==='draw' ? 'block' : 'none';
+  document.getElementById('tabType').style.display = tab==='type' ? 'block' : 'none';
+  document.getElementById('tabModel').style.display = tab==='model' ? 'block' : 'none';
+  if (tab === 'draw') setTimeout(initCanvas, 50);
+  if (tab === 'model') buildSigModels();
+}
+window.setTab = setTab;
+
+function renderTyped(val) {
+  const canvas = document.getElementById('typedCanvas');
+  canvas.width = 500; canvas.height = 100;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 500, 100);
+  ctx.font = "italic 42px 'Cormorant Garamond', Georgia, serif";
+  ctx.fillStyle = '#1a1a1a';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(val, 250, 52);
+  state.sigData = val ? canvas.toDataURL() : null;
+}
+window.renderTyped = renderTyped;
+
+function buildSigModels() {
+  const nome = document.getElementById('nomeCliente').value || 'Sua Assinatura';
+  const container = document.getElementById('sigModels');
+  container.innerHTML = '';
+  SIG_FONTS.forEach((f, i) => {
+    const div = document.createElement('div');
+    div.className = 'sig-model';
+    div.id = 'sigModel' + i;
+    div.onclick = () => selectModel(i, nome, f);
+    div.innerHTML = '<span style="font-family:' + f.font + ';font-style:' + f.style + ';font-size:20px;color:#1a1a1a">' + nome + '</span><small>' + f.label + '</small>';
+    container.appendChild(div);
+  });
+}
+
+function selectModel(idx, nome, f) {
+  document.querySelectorAll('.sig-model').forEach(m => m.classList.remove('selected'));
+  document.getElementById('sigModel' + idx).classList.add('selected');
+  const canvas = document.getElementById('modelCanvas');
+  canvas.width = 500; canvas.height = 100;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 500, 100);
+  ctx.font = f.style + ' 40px ' + f.font;
+  ctx.fillStyle = '#1a1a1a';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(nome, 250, 52);
+  state.sigData = canvas.toDataURL();
+}
+
+function generateCarolineSig() {
+  const c = document.createElement('canvas');
+  c.width = 500; c.height = 140;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.shadowColor = 'rgba(15,70,56,0.13)'; ctx.shadowBlur = 4; ctx.shadowOffsetY = 2;
+  ctx.beginPath(); ctx.moveTo(18,38);
+  ctx.bezierCurveTo(6,22,2,8,22,4); ctx.bezierCurveTo(38,1,52,10,46,22);
+  ctx.strokeStyle = '#1a1a2e'; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.stroke();
+  ctx.shadowBlur = 3;
+  ctx.font = "italic 58px 'Brush Script MT', 'Segoe Script', cursive";
+  ctx.fillStyle = '#1a1a2e'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.fillText('Carol', 14, 90);
+  ctx.shadowBlur = 0;
+  const w = ctx.measureText('Carol').width;
+  ctx.beginPath(); ctx.moveTo(14+w-4,88);
+  ctx.bezierCurveTo(14+w+18,82,14+w+40,102,14+w+24,112);
+  ctx.bezierCurveTo(14+w+10,120,14+w-10,116,14+w+4,108);
+  ctx.strokeStyle = '#1a1a2e'; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(10,104);
+  ctx.bezierCurveTo(50,98,120,112,200,106);
+  ctx.bezierCurveTo(260,101,300,110,14+w+10,107);
+  ctx.strokeStyle = 'rgba(15,110,86,0.35)'; ctx.lineWidth = 1.0; ctx.stroke();
+  ctx.beginPath(); ctx.arc(8,92,2,0,Math.PI*2);
+  ctx.fillStyle = 'rgba(15,110,86,0.3)'; ctx.fill();
+  window._carolineSig = c.toDataURL();
+}
+generateCarolineSig();
+
+function buildPDFHtml(contractId) {
+  const nome = document.getElementById('nomeCliente').value;
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  const local = document.getElementById('localAssinatura').value || 'Nova União/MG';
+  const contractText = document.getElementById('contractText').innerHTML;
+  const sigImg = state.sigData ? '<img src="' + state.sigData + '" style="height:70px;max-width:260px">' : '';
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+'<title>Contrato – Consultoria e Auditoria Financeira</title>' +
+'<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">' +
+'<style>' +
+'body{font-family:\'DM Sans\',sans-serif;color:#1a1a1a;max-width:720px;margin:0 auto;padding:40px 32px;font-size:13px;line-height:1.8}' +
+'h3{font-family:\'Cormorant Garamond\',serif;font-size:16px;font-weight:600;margin:18px 0 6px;border-bottom:1px solid #e0e0e0;padding-bottom:4px}' +
+'.headerx{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:20px;border-bottom:2px solid #0F6E56}' +
+'.logox{font-family:\'Cormorant Garamond\',serif;font-size:20px;color:#0F6E56;font-weight:600}' +
+'.sig-area{display:flex;justify-content:space-between;margin-top:48px;gap:40px}' +
+'.sig-block{flex:1;border-top:1.5px solid #1a1a1a;padding-top:10px;font-size:12px;color:#444}' +
+'.highlight{background:#e1f5ee;border-left:3px solid #0F6E56;padding:8px 12px;margin:8px 0;border-radius:0 4px 4px 0}' +
+'table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px}' +
+'table th{background:#E1F5EE;color:#0F6E56;text-align:left;padding:6px 10px}' +
+'table td{padding:6px 10px;border-bottom:1px solid #f0ede8}' +
+'ul{margin:4px 0 10px 16px}' +
+'@media print{body{padding:20px}}' +
+'</style></head><body>' +
+'<div class="headerx">' +
+  '<div><div class="logox">Caroline Inacia Pinto</div><div style="font-size:11px;color:#888;margin-top:2px">Consultoria e Auditoria Financeira · CNPJ 61.934.682/0001-02</div></div>' +
+  '<div style="text-align:right;font-size:12px;color:#888">Protocolo: ' + contractId + '<br>' + hoje + '</div>' +
+'</div>' +
+contractText +
+'<div class="sig-area">' +
+  '<div class="sig-block">' +
+    sigImg +
+    '<p><strong>' + nome + '</strong><br>CONTRATANTE</p>' +
+    '<p>' + local + ', ' + hoje + '</p>' +
+  '</div>' +
+  '<div class="sig-block">' +
+    '<img src="' + (window._carolineSig || '') + '" style="height:65px;max-width:260px;display:block;margin-bottom:4px">' +
+    '<p><strong>Caroline Inacia Pinto</strong><br>CONTRATADA<br>CNPJ 61.934.682/0001-02</p>' +
+  '</div>' +
+'</div>' +
+'</body></html>';
+}
+
+function downloadPDF() {
+  const html = buildPDFHtml(window._contractId || 'CAF-000000');
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => win.print(), 800);
+}
+window.downloadPDF = downloadPDF;
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAJ22iShszwMw3mVHLrkLgpbFRRHrV_tMA",
+  authDomain: "contrato-2af5f.firebaseapp.com",
+  projectId: "contrato-2af5f",
+  storageBucket: "contrato-2af5f.firebasestorage.app",
+  messagingSenderId: "363926701528",
+  appId: "1:363926701528:web:6f7682757c647adc501ead"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+
+async function finalizar() {
+  if (!state.sigData) { alert('Por favor, assine o contrato antes de finalizar.'); return; }
+
+  const btn = document.querySelector('#panel4 .btn-next');
+  btn.disabled = true;
+  btn.textContent = '⏳ Salvando...';
+
+  const contractId = 'CAF-' + Date.now().toString().slice(-6);
+  window._contractId = contractId;
+  const total = state.empresas.length * VALOR_POR_EMPRESA;
+
+  let saveStatus = '';
+  try {
+    await addDoc(collection(db, 'contratos_consultoria'), {
+      protocolo: contractId,
+      criadoEm: serverTimestamp(),
+      data_legivel: new Date().toLocaleString('pt-BR'),
+      nome: document.getElementById('nomeCliente').value,
+      cpf_cnpj: document.getElementById('docCliente').value,
+      email: document.getElementById('emailCliente').value,
+      telefone: document.getElementById('telCliente').value,
+      endereco: document.getElementById('endCliente').value,
+      empresas: state.empresas.map(e => ({ nome: e.nome, horasDia: e.horasDia })),
+      qtd_empresas: state.empresas.length,
+      valor_total: 'R$ ' + total.toLocaleString('pt-BR') + ',00',
+      local_assinatura: document.getElementById('localAssinatura').value || 'Nova União/MG',
+      modo_assinatura: state.sigMode,
+      assinatura_img: state.sigData
+    });
+    saveStatus = '✅ Contrato salvo com sucesso!';
+  } catch (e) {
+    console.error('Firebase erro:', e);
+    saveStatus = '⚠️ Erro ao salvar: ' + e.message;
+  }
+
+  document.getElementById('contractIdDisplay').innerHTML =
+    'Protocolo: <strong>' + contractId + '</strong><br><span style="font-size:12px;font-weight:400">' + saveStatus + '</span>';
+
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panelSuccess').classList.add('active');
+  document.querySelectorAll('.step-item').forEach(s => s.classList.add('done'));
+
+  if (state.sigData) document.getElementById('previewClienteSig').src = state.sigData;
+  if (window._carolineSig) document.getElementById('previewCarolineSig').src = window._carolineSig;
+
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  btn.disabled = false;
+  btn.textContent = '✅ Finalizar e baixar PDF';
+}
+window.finalizar = finalizar;
+
+const dataEl = document.getElementById('dataAssinatura');
+if (dataEl) dataEl.valueAsDate = new Date();
+</script>
+</body>
+</html>
