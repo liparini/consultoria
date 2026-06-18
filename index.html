@@ -209,8 +209,8 @@ input::placeholder{color:#bbb}
       <div class="card-sub">Leia o contrato completo antes de prosseguir com a assinatura.</div>
       <div class="contract-text" id="contractText"></div>
       <div style="margin-top:18px">
-        <div class="agree-box" onclick="toggleAgree()">
-          <input type="checkbox" id="agreeCheck">
+        <div class="agree-box">
+          <input type="checkbox" id="agreeCheck" onchange="toggleAgree()">
           <label for="agreeCheck">Li e concordo integralmente com os termos e condições deste contrato de prestação de serviços.</label>
         </div>
       </div>
@@ -416,9 +416,7 @@ function validateStep1() {
 }
 
 function toggleAgree() {
-  const checked = document.getElementById('agreeCheck').checked;
-  document.getElementById('agreeCheck').checked = !checked;
-  state.agreed = !checked;
+  state.agreed = document.getElementById('agreeCheck').checked;
   document.getElementById('btnSign').disabled = !state.agreed;
 }
 window.toggleAgree = toggleAgree;
