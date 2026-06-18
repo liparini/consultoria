@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Admin – Consultoria & Auditoria Financeira</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --verde:#0F6E56;--verde-claro:#1D9E75;--verde-bg:#E1F5EE;--verde-borda:#9FE1CB;
+  --areia:#FAF8F4;--preto:#1a1a1a;--cinza:#5F5E5A;--cinza-claro:#F1EFE8;--borda:#E0DBD2;
+}
+body{font-family:'DM Sans',sans-serif;color:var(--preto);background:var(--areia);min-height:100vh}
+
+.header{background:var(--verde);padding:16px 5%;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:#fff}
+.logo span{font-style:italic;font-size:13px;opacity:0.7;display:block;margin-top:1px}
+.header-right{display:flex;align-items:center;gap:12px}
+.badge-admin{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:100px}
+.btn-logout{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:13px;font-weight:600;padding:7px 16px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.btn-logout:hover{background:rgba(255,255,255,0.2)}
+
+.login-wrap{min-height:90vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:#fff;border:1px solid var(--borda);border-radius:20px;padding:40px;width:100%;max-width:380px;text-align:center;box-shadow:0 20px 60px rgba(15,110,86,0.08)}
+.login-icon{width:64px;height:64px;background:var(--verde-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px}
+.login-card h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:6px}
+.login-card p{font-size:14px;color:var(--cinza);margin-bottom:28px}
+.input-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;text-align:left}
+.input-group label{font-size:13px;font-weight:600}
+.input-group input{border:1.5px solid var(--borda);border-radius:8px;padding:11px 14px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border 0.2s}
+.input-group input:focus{border-color:var(--verde)}
+.btn-login{width:100%;background:var(--verde);color:#fff;border:none;border-radius:100px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;margin-top:6px}
+.btn-login:hover{background:var(--verde-claro)}
+.login-error{background:#FEE2E2;color:#DC2626;font-size:13px;padding:10px 14px;border-radius:8px;margin-top:12px;display:none}
+
+.main{max-width:1100px;margin:0 auto;padding:32px 20px 60px}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:4px}
+.page-sub{font-size:14px;color:var(--cinza);margin-bottom:28px}
+
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px 20px}
+.stat-card .num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:var(--verde);line-height:1}
+.stat-card .lbl{font-size:13px;color:var(--cinza);margin-top:4px}
+
+.filters{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.filter-input{border:1.5px solid var(--borda);border-radius:8px;padding:9px 14px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;background:#fff;transition:border 0.2s;min-width:200px}
+.filter-input:focus{border-color:var(--verde)}
+.btn-refresh{background:var(--verde);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.btn-refresh:hover{background:var(--verde-claro)}
+.results-count{font-size:13px;color:var(--cinza);margin-left:auto}
+
+.table-wrap{background:#fff;border:1px solid var(--borda);border-radius:16px;overflow-x:auto}
+.table-wrap table{width:100%;border-collapse:collapse}
+.table-wrap thead{background:var(--verde)}
+.table-wrap thead th{color:#fff;font-size:12px;font-weight:600;letter-spacing:0.5px;padding:13px 16px;text-align:left;white-space:nowrap}
+.table-wrap tbody tr{border-bottom:1px solid #f5f2ed;transition:background 0.15s}
+.table-wrap tbody tr:last-child{border-bottom:none}
+.table-wrap tbody tr:hover{background:var(--verde-bg)}
+.table-wrap td{padding:13px 16px;font-size:13px;color:var(--preto);vertical-align:middle}
+.badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700}
+.badge-ativo{background:var(--verde-bg);color:var(--verde);border:1px solid var(--verde-borda)}
+.badge-inativo{background:var(--cinza-claro);color:var(--cinza);border:1px solid var(--borda)}
+
+.btn-view{background:var(--verde-bg);color:var(--verde);border:1px solid var(--verde-borda);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;white-space:nowrap;display:block;width:100%;margin-bottom:4px}
+.btn-view:hover{background:var(--verde);color:#fff}
+.btn-pdf{background:#fff;color:var(--preto);border:1px solid var(--borda);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;white-space:nowrap;display:block;width:100%;margin-bottom:4px}
+.btn-pdf:hover{background:var(--preto);color:#fff}
+.btn-cob{background:#FFF8E1;color:#856404;border:1px solid #FFE082;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:block;width:100%;margin-bottom:4px}
+.btn-cob:hover{background:#856404;color:#fff}
+.btn-del{background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;white-space:nowrap;display:block;width:100%}
+.btn-del:hover{background:#DC2626;color:#fff}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;margin-bottom:6px}
+.status-ativo{background:var(--verde-bg);color:var(--verde);border:1px solid var(--verde-borda)}
+.status-inativo{background:var(--cinza-claro);color:var(--cinza);border:1px solid var(--borda)}
+
+.empty{text-align:center;padding:60px 20px;color:var(--cinza)}
+.loading{text-align:center;padding:60px 20px;color:var(--cinza);font-size:14px}
+.spinner{width:32px;height:32px;border:3px solid var(--verde-borda);border-top-color:var(--verde);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:660px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.2)}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--borda);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1}
+.modal-header h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--cinza);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--cinza-claro)}
+.modal-body{padding:24px}
+.modal-field{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f5f2ed;font-size:14px}
+.modal-field:last-child{border-bottom:none}
+.modal-label{color:var(--cinza);min-width:140px}
+.modal-value{font-weight:500;text-align:right;max-width:300px;word-break:break-word}
+.modal-sig{margin-top:16px;padding-top:16px;border-top:1px solid var(--borda)}
+.modal-sig h4{font-size:13px;font-weight:600;color:var(--cinza);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
+.modal-sig img{max-height:70px;border:1px solid var(--borda);border-radius:8px;padding:8px;background:#fafafa}
+.empresas-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+.empresas-table th{background:var(--verde-bg);color:var(--verde);padding:7px 10px;text-align:left;font-weight:600}
+.empresas-table td{padding:7px 10px;border-bottom:1px solid #f0ede8}
+.modal-actions{padding:16px 24px;border-top:1px solid var(--borda);display:flex;gap:10px;justify-content:flex-end}
+.btn-modal-pdf{background:var(--verde);color:#fff;border:none;border-radius:100px;padding:11px 22px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.btn-modal-pdf:hover{background:var(--verde-claro)}
+.btn-modal-close{background:#fff;color:var(--preto);border:1.5px solid var(--borda);border-radius:100px;padding:11px 22px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.btn-modal-close:hover{background:var(--areia)}
+
+.cobranca-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:8px;font-size:13px;margin-bottom:6px;border:1px solid var(--borda)}
+.cobranca-row.pago{background:#EAF3DE;border-color:#C0DD97}
+.cobranca-row.pendente{background:#FFF8E1;border-color:#FFE082}
+.cobranca-row.atrasado{background:#FEE2E2;border-color:#FCA5A5}
+.cobranca-check{width:18px;height:18px;border-radius:4px;cursor:pointer;accent-color:var(--verde)}
+
+@media(max-width:768px){
+  .stats-bar{grid-template-columns:1fr 1fr}
+  .table-wrap{overflow-x:auto}
+  .filters{flex-direction:column;align-items:stretch}
+  .filter-input{width:100%}
+  .results-count{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">caroline<span>consultoria & auditoria financeira</span></div>
+  <div class="header-right">
+    <div class="badge-admin">Painel Admin</div>
+    <button class="btn-logout" id="btnLogout" style="display:none" onclick="logout()">Sair</button>
+  </div>
+</div>
+
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="login-icon">🔐</div>
+    <h2>Área Restrita</h2>
+    <p>Acesse com sua senha para visualizar os contratos de consultoria.</p>
+    <div class="input-group">
+      <label>Senha de acesso</label>
+      <input type="password" id="senhaInput" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')entrar()">
+    </div>
+    <button class="btn-login" onclick="entrar()">Entrar no painel</button>
+    <div class="login-error" id="loginError">Senha incorreta. Tente novamente.</div>
+  </div>
+</div>
+
+<div id="painelScreen" style="display:none">
+  <div class="main">
+    <div class="page-title">Contratos de Consultoria</div>
+    <div class="page-sub">Gerencie os contratos de consultoria e auditoria financeira.</div>
+
+    <div class="stats-bar">
+      <div class="stat-card"><div class="num" id="statTotal">—</div><div class="lbl">Total de contratos</div></div>
+      <div class="stat-card"><div class="num" id="statEmpresas">—</div><div class="lbl">Empresas atendidas</div></div>
+      <div class="stat-card"><div class="num" id="statReceita">—</div><div class="lbl">Receita mensal total</div></div>
+      <div class="stat-card"><div class="num" id="statMes">—</div><div class="lbl">Novos este mês</div></div>
+    </div>
+
+    <div class="filters">
+      <input class="filter-input" id="filterBusca" type="text" placeholder="🔍 Buscar por nome ou empresa..." oninput="filtrar()">
+      <button class="btn-refresh" onclick="carregarContratos()">↻ Atualizar</button>
+      <span class="results-count" id="resultsCount"></span>
+    </div>
+
+    <div class="table-wrap" id="tableWrap">
+      <div class="loading"><div class="spinner"></div>Carregando contratos...</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)fecharModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitulo">Detalhes do Contrato</h3>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-close" onclick="fecharModal()">Fechar</button>
+      <button class="btn-modal-pdf" onclick="gerarPDFModal()">⬇️ Baixar PDF</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAJ22iShszwMw3mVHLrkLgpbFRRHrV_tMA",
+  authDomain: "contrato-2af5f.firebaseapp.com",
+  projectId: "contrato-2af5f",
+  storageBucket: "contrato-2af5f.firebasestorage.app",
+  messagingSenderId: "363926701528",
+  appId: "1:363926701528:web:6f7682757c647adc501ead"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const SENHA_ADMIN = 'minharecepcionista2025';
+let todosContratos = [];
+let contratoAtual = null;
+let contratoAtualIdx = null;
+
+function show(id){ document.getElementById(id).style.display='block'; }
+function hide(id){ document.getElementById(id).style.display='none'; }
+function flex(id){ document.getElementById(id).style.display='flex'; }
+function text(id,v){ document.getElementById(id).textContent=v; }
+
+// ── LOGIN ─────────────────────────────────────────────────
+function entrar() {
+  const senha = document.getElementById('senhaInput').value;
+  if (senha === SENHA_ADMIN) {
+    hide('loginScreen');
+    show('painelScreen');
+    show('btnLogout');
+    sessionStorage.setItem('adminCaf','1');
+    carregarContratos();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('senhaInput').value = '';
+    document.getElementById('senhaInput').focus();
+  }
+}
+window.entrar = entrar;
+
+function logout() {
+  sessionStorage.removeItem('adminCaf');
+  flex('loginScreen');
+  hide('painelScreen');
+  hide('btnLogout');
+}
+window.logout = logout;
+
+if (sessionStorage.getItem('adminCaf') === '1') {
+  hide('loginScreen');
+  show('painelScreen');
+  show('btnLogout');
+  setTimeout(carregarContratos, 100);
+}
+
+// ── CARREGAR ──────────────────────────────────────────────
+async function carregarContratos() {
+  document.getElementById('tableWrap').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando contratos...</div>';
+  try {
+    const q = query(collection(db,'contratos_consultoria'), orderBy('criadoEm','desc'));
+    const snap = await getDocs(q);
+    todosContratos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e) {
+    try {
+      const snap = await getDocs(collection(db,'contratos_consultoria'));
+      todosContratos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      todosContratos.sort((a,b) => (b.data_legivel||'').localeCompare(a.data_legivel||''));
+    } catch(e2) {
+      document.getElementById('tableWrap').innerHTML = '<div class="empty">⚠️ Erro ao carregar: '+e2.message+'</div>';
+      return;
+    }
+  }
+  atualizarStats();
+  filtrar();
+}
+window.carregarContratos = carregarContratos;
+
+// ── STATS ─────────────────────────────────────────────────
+function atualizarStats() {
+  const total = todosContratos.length;
+  const totalEmpresas = todosContratos.reduce((s,c) => s + (c.qtd_empresas||0), 0);
+  const receita = totalEmpresas * 1000;
+  const mesAtual = new Date().toLocaleString('pt-BR',{month:'2-digit',year:'numeric'});
+  const mes = todosContratos.filter(c => (c.data_legivel||'').includes(mesAtual.slice(-4))).length;
+  text('statTotal', total);
+  text('statEmpresas', totalEmpresas);
+  text('statReceita', 'R$' + receita.toLocaleString('pt-BR'));
+  text('statMes', mes);
+}
+
+// ── FILTRAR ───────────────────────────────────────────────
+function filtrar() {
+  const busca = document.getElementById('filterBusca').value.toLowerCase();
+  let lista = todosContratos.filter(c => {
+    if (!busca) return true;
+    if ((c.nome||'').toLowerCase().includes(busca)) return true;
+    if ((c.protocolo||'').toLowerCase().includes(busca)) return true;
+    if ((c.email||'').toLowerCase().includes(busca)) return true;
+    if ((c.empresas||[]).some(e => (e.nome||'').toLowerCase().includes(busca))) return true;
+    return false;
+  });
+  text('resultsCount', lista.length + ' resultado(s)');
+  renderTabela(lista);
+}
+window.filtrar = filtrar;
+
+// ── TABELA ────────────────────────────────────────────────
+function renderTabela(lista) {
+  if (!lista.length) {
+    document.getElementById('tableWrap').innerHTML = '<div class="empty">📋 Nenhum contrato encontrado.</div>';
+    return;
+  }
+  window._listaFiltrada = lista;
+  const rows = lista.map((c,i) => {
+    const empresasNomes = (c.empresas||[]).map(e=>e.nome).join(', ') || '—';
+    const valor = c.valor_total || ('R$ ' + ((c.qtd_empresas||0)*1000).toLocaleString('pt-BR') + ',00');
+    return '<tr>' +
+      '<td style="font-weight:600;color:var(--verde);font-size:12px">' + (c.protocolo||'—') + '</td>' +
+      '<td>' + ((c.data_legivel||'—').split(' ')[0]) + '</td>' +
+      '<td><div style="font-weight:600">' + (c.nome||'—') + '</div><div style="font-size:12px;color:var(--cinza)">' + (c.email||'') + '</div></td>' +
+      '<td><div style="font-size:13px;max-width:200px;color:var(--cinza)">' + empresasNomes + '</div></td>' +
+      '<td style="text-align:center"><span style="font-family:\'Cormorant Garamond\',serif;font-size:18px;font-weight:600;color:var(--verde)">' + (c.qtd_empresas||0) + '</span></td>' +
+      '<td style="font-weight:600">' + valor + '/mês</td>' +
+      '<td>' +
+        '<div style="display:flex;flex-direction:column;gap:4px;min-width:130px">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">' +
+            '<span class="status-badge ' + (c.ativo ? 'status-ativo' : 'status-inativo') + '">' + (c.ativo ? '● Ativo' : '● Inativo') + '</span>' +
+            '<button class="btn-del" style="width:auto;padding:3px 8px" onclick="excluirContrato(\''+c.id+'\',\''+((c.nome||'').replace(/'/g,''))+'\')">✕</button>' +
+          '</div>' +
+          '<button class="btn-view" onclick="abrirModal('+i+')">👁 Ver detalhes</button>' +
+          '<button class="btn-pdf" onclick="gerarPDF('+i+')">📄 Baixar PDF</button>' +
+          (c.ativo
+            ? '<button class="btn-cob" onclick="abrirCobrancas('+i+')">💰 Cobranças</button>'
+            : '<button class="btn-view" onclick="ativarContrato(\''+c.id+'\')" style="background:var(--verde);color:#fff;border-color:var(--verde)">✅ Ativar</button>'
+          ) +
+        '</div>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+
+  document.getElementById('tableWrap').innerHTML = '<table>' +
+    '<thead><tr>' +
+      '<th>Protocolo</th><th>Data</th><th>Contratante</th>' +
+      '<th>Empresas</th><th style="text-align:center">Qtd</th><th>Valor</th><th style="min-width:140px">Ações</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+function abrirModal(idx) {
+  const c = window._listaFiltrada[idx];
+  contratoAtual = c;
+  contratoAtualIdx = idx;
+  text('modalTitulo', 'Contrato ' + (c.protocolo||''));
+
+  const empresasRows = (c.empresas||[]).map((e,i) =>
+    '<tr><td>' + (i+1) + '</td><td>' + e.nome + '</td><td>' + (e.horasDia ? e.horasDia+'h/dia' : '—') + '</td><td>R$ 1.000,00/mês</td></tr>'
+  ).join('');
+
+  const campos = [
+    ['Protocolo', c.protocolo],
+    ['Data', c.data_legivel],
+    ['Nome', c.nome],
+    ['CPF / CNPJ', c.cpf_cnpj],
+    ['E-mail', c.email],
+    ['Telefone', c.telefone],
+    ['Endereço', c.endereco],
+    ['Qtd. empresas', c.qtd_empresas],
+    ['Valor total mensal', c.valor_total],
+    ['Local assinatura', c.local_assinatura],
+  ];
+
+  const sigHtml = c.assinatura_img
+    ? '<div class="modal-sig"><h4>Assinatura do Contratante</h4><img src="' + c.assinatura_img + '" alt="Assinatura"></div>' : '';
+
+  document.getElementById('modalBody').innerHTML =
+    campos.map(([l,v]) => '<div class="modal-field"><span class="modal-label">'+l+'</span><span class="modal-value">'+(v||'—')+'</span></div>').join('') +
+    (empresasRows ? '<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--borda)"><div style="font-size:12px;font-weight:600;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Empresas contratadas</div><table class="empresas-table"><tr><th>#</th><th>Empresa</th><th>Carga horária</th><th>Valor</th></tr>' + empresasRows + '</table></div>' : '') +
+    sigHtml;
+
+  document.getElementById('modalOverlay').classList.add('open');
+}
+window.abrirModal = abrirModal;
+
+function fecharModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+window.fecharModal = fecharModal;
+
+// ── ATIVAR ────────────────────────────────────────────────
+async function ativarContrato(id) {
+  if (!confirm('Confirmar ativação do contrato? A 1ª cobrança será registrada no final do ciclo atual.')) return;
+  const hoje = new Date();
+  const primeiraCobranca = { numero:1, dataVenc: new Date(hoje.getFullYear(), hoje.getMonth()+1, hoje.getDate()).toISOString(), pago:false, dataPago:null };
+  try {
+    await updateDoc(doc(db,'contratos_consultoria',id), {
+      ativo: true,
+      dataAtivacao: serverTimestamp(),
+      cobrancas: [primeiraCobranca]
+    });
+    await carregarContratos();
+  } catch(e) { alert('Erro: '+e.message); }
+}
+window.ativarContrato = ativarContrato;
+
+// ── EXCLUIR ───────────────────────────────────────────────
+async function excluirContrato(id, nome) {
+  if (!confirm('Excluir o contrato de "'+nome+'"? Esta ação não pode ser desfeita.')) return;
+  try {
+    await deleteDoc(doc(db,'contratos_consultoria',id));
+    await carregarContratos();
+  } catch(e) { alert('Erro ao excluir: '+e.message); }
+}
+window.excluirContrato = excluirContrato;
+
+// ── COBRANÇAS ─────────────────────────────────────────────
+async function abrirCobrancas(idx) {
+  const c = window._listaFiltrada[idx];
+  contratoAtual = c;
+  contratoAtualIdx = idx;
+  const ativacao = c.dataAtivacao?.toDate ? c.dataAtivacao.toDate() : new Date(c.dataAtivacao||Date.now());
+  const cobrancas = c.cobrancas || [];
+  const hoje = new Date();
+  const totalMensal = (c.qtd_empresas||0) * 1000;
+
+  const lista = [];
+  for (let i=0; i<12; i++) {
+    const vencFim = new Date(ativacao);
+    vencFim.setMonth(vencFim.getMonth() + i + 1);
+    const salva = cobrancas.find(x => x.numero === i+1);
+    lista.push({ numero:i+1, dataVenc:vencFim, pago:salva?.pago||false, dataPago:salva?.dataPago||null });
+  }
+
+  const todasPagas = lista.every(x => x.pago);
+
+  const reajusteAlert = todasPagas ? '<div style="background:#FFF8E1;border:1px solid #FFE082;border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:13px;color:#7c6200;line-height:1.7">🎉 <strong>Ciclo anual concluído!</strong><br>Conforme contrato, você pode aplicar o <strong>reajuste pelo IPCA</strong> antes de iniciar o próximo ciclo. Avise o cliente com <strong>30 dias de antecedência</strong>.</div>' : '';
+
+  const rows = lista.map(cb => {
+    const vencida = !cb.pago && cb.dataVenc < hoje;
+    const status = cb.pago ? 'pago' : vencida ? 'atrasado' : 'pendente';
+    const label = cb.pago ? '✅ Recebida' : vencida ? '⚠️ Pendente' : '⏳ Futura';
+    const dataFmt = cb.dataVenc.toLocaleDateString('pt-BR');
+    return '<div class="cobranca-row '+status+'">' +
+      '<div><strong style="font-size:13px">'+(cb.numero===1?'1ª Cobrança (final do 1º ciclo)':cb.numero+'ª Cobrança')+'</strong>' +
+      '<div style="font-size:12px;color:var(--cinza)">Vencimento: '+dataFmt+' · '+label+' · R$ '+totalMensal.toLocaleString('pt-BR')+',00</div></div>' +
+      '<input type="checkbox" class="cobranca-check" '+(cb.pago?'checked':'')+' onchange="toggleCobranca('+(cb.numero-1)+',this.checked)" title="Marcar como recebida">' +
+      '</div>';
+  }).join('');
+
+  document.getElementById('modalBody').innerHTML =
+    '<div style="background:var(--verde-bg);border:1px solid var(--verde-borda);border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:var(--verde)">' +
+      '<strong>'+(c.nome||'')+'</strong> · '+(c.qtd_empresas||0)+' empresa(s)<br>' +
+      'Valor mensal: <strong>R$ '+totalMensal.toLocaleString('pt-BR')+',00</strong> · Ativado em: <strong>'+ativacao.toLocaleDateString('pt-BR')+'</strong>' +
+    '</div>' +
+    reajusteAlert +
+    '<div style="font-size:12px;color:var(--cinza);margin-bottom:10px">Cobranças ao final de cada ciclo mensal. Marque quando receber o pagamento.</div>' +
+    rows;
+
+  text('modalTitulo', '💰 Cobranças — ' + (c.protocolo||''));
+  document.getElementById('modalOverlay').classList.add('open');
+}
+window.abrirCobrancas = abrirCobrancas;
+
+async function toggleCobranca(idx, checked) {
+  const c = contratoAtual;
+  if (!c) return;
+  const ativacao = c.dataAtivacao?.toDate ? c.dataAtivacao.toDate() : new Date(c.dataAtivacao||Date.now());
+  const cobrancas = Array.from({length:12},(_,i) => {
+    const salva = (c.cobrancas||[]).find(x=>x.numero===i+1);
+    const venc = new Date(ativacao); venc.setMonth(venc.getMonth()+i+1);
+    return salva || {numero:i+1, dataVenc:venc.toISOString(), pago:false, dataPago:null};
+  });
+  cobrancas[idx].pago = checked;
+  cobrancas[idx].dataPago = checked ? new Date().toISOString() : null;
+  try {
+    await updateDoc(doc(db,'contratos_consultoria',c.id),{cobrancas});
+    c.cobrancas = cobrancas;
+    abrirCobrancas(contratoAtualIdx);
+  } catch(e) { alert('Erro: '+e.message); }
+}
+window.toggleCobranca = toggleCobranca;
+
+// ── PDF ───────────────────────────────────────────────────
+function gerarPDF(idx) { contratoAtual = window._listaFiltrada[idx]; gerarPDFModal(); }
+window.gerarPDF = gerarPDF;
+
+function gerarPDFModal() {
+  if (!contratoAtual) return;
+  const c = contratoAtual;
+
+  const cv = document.createElement('canvas');
+  cv.width=500; cv.height=140;
+  const ctx = cv.getContext('2d');
+  ctx.shadowColor='rgba(15,70,56,0.13)'; ctx.shadowBlur=4; ctx.shadowOffsetY=2;
+  ctx.beginPath(); ctx.moveTo(18,38);
+  ctx.bezierCurveTo(6,22,2,8,22,4); ctx.bezierCurveTo(38,1,52,10,46,22);
+  ctx.strokeStyle='#1a1a2e'; ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.stroke();
+  ctx.shadowBlur=3;
+  ctx.font="italic 58px 'Brush Script MT',cursive";
+  ctx.fillStyle='#1a1a2e'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  ctx.fillText('Carol',14,90);
+  ctx.shadowBlur=0;
+  const w=ctx.measureText('Carol').width;
+  ctx.beginPath(); ctx.moveTo(14+w-4,88);
+  ctx.bezierCurveTo(14+w+18,82,14+w+40,102,14+w+24,112);
+  ctx.bezierCurveTo(14+w+10,120,14+w-10,116,14+w+4,108);
+  ctx.strokeStyle='#1a1a2e'; ctx.lineWidth=1.6; ctx.lineCap='round'; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(10,104);
+  ctx.bezierCurveTo(50,98,120,112,200,106);
+  ctx.bezierCurveTo(260,101,300,110,14+w+10,107);
+  ctx.strokeStyle='rgba(15,110,86,0.35)'; ctx.lineWidth=1.0; ctx.stroke();
+  ctx.beginPath(); ctx.arc(8,92,2,0,Math.PI*2);
+  ctx.fillStyle='rgba(15,110,86,0.3)'; ctx.fill();
+  const carolineSig = cv.toDataURL();
+
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  const totalMensal = (c.qtd_empresas||0) * 1000;
+
+  const empresasRows = (c.empresas||[]).map((e,i) =>
+    '<tr><td>'+(i+1)+'</td><td>'+e.nome+'</td><td>'+(e.horasDia?e.horasDia+'h/dia':'—')+'</td><td>R$ 1.000,00/mês</td></tr>'
+  ).join('');
+
+  const sigCliente = c.assinatura_img
+    ? '<img src="'+c.assinatura_img+'" style="height:65px;max-width:260px;display:block;margin-bottom:4px">'
+    : '<div style="height:65px"></div>';
+
+  const html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+'<title>Contrato '+c.protocolo+'</title>' +
+'<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">' +
+'<style>' +
+'*{margin:0;padding:0;box-sizing:border-box}' +
+'body{font-family:\'DM Sans\',sans-serif;color:#1a1a1a;max-width:740px;margin:0 auto;padding:40px 32px;font-size:13px;line-height:1.8}' +
+'.hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:18px;border-bottom:2.5px solid #0F6E56}' +
+'.logo{font-family:\'Cormorant Garamond\',serif;font-size:22px;color:#0F6E56;font-weight:600}' +
+'h3{font-family:\'Cormorant Garamond\',serif;font-size:15px;font-weight:600;margin:18px 0 7px;border-bottom:1px solid #e0dbd2;padding-bottom:4px}' +
+'p{margin-bottom:6px} ul{margin:4px 0 10px 18px} ul li{margin-bottom:3px}' +
+'.hl{background:#e1f5ee;border-left:3px solid #0F6E56;padding:9px 13px;margin:10px 0;border-radius:0 6px 6px 0}' +
+'table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px}' +
+'table th{background:#E1F5EE;color:#0F6E56;text-align:left;padding:6px 10px;font-weight:600}' +
+'table td{padding:6px 10px;border-bottom:1px solid #f0ede8}' +
+'.sigs{display:flex;justify-content:space-between;margin-top:56px;gap:48px}' +
+'.sig{flex:1;border-top:1.5px solid #1a1a1a;padding-top:10px;font-size:12px;color:#444}' +
+'@media print{body{padding:24px}}' +
+'</style></head><body>' +
+'<div class="hdr">' +
+  '<div><div class="logo">Caroline Inacia Pinto</div><div style="font-size:11px;color:#888;margin-top:3px">Consultoria e Auditoria Financeira · CNPJ 61.934.682/0001-02</div></div>' +
+  '<div style="text-align:right;font-size:12px;color:#888"><strong>Protocolo: '+c.protocolo+'</strong><br>'+(c.data_legivel||hoje)+'</div>' +
+'</div>' +
+'<h3>CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE CONSULTORIA E AUDITORIA FINANCEIRA</h3>' +
+'<h3>CLÁUSULA 1 – DAS PARTES</h3>' +
+'<p><strong>CONTRATADA:</strong> Caroline Inacia Pinto, CNPJ <strong>61.934.682/0001-02</strong>, Rua F, 322, Sol Nascente, Nova União/MG.</p>' +
+'<p><strong>CONTRATANTE:</strong> '+c.nome+', CPF/CNPJ '+c.cpf_cnpj+', e-mail '+c.email+', endereço '+c.endereco+'.</p>' +
+'<h3>CLÁUSULA 2 – DO OBJETO</h3>' +
+'<p>Prestação de serviços de consultoria e auditoria financeira para as empresas abaixo:</p>' +
+'<table><tr><th>#</th><th>Empresa</th><th>Carga horária de referência</th><th>Valor mensal</th></tr>'+empresasRows+'</table>' +
+'<h3>CLÁUSULA 3 – DO VALOR E FORMA DE PAGAMENTO</h3>' +
+'<p><strong>Valor por empresa:</strong> R$ 1.000,00/mês · <strong>Quantidade de empresas:</strong> '+(c.qtd_empresas||0)+'</p>' +
+'<div class="hl">💳 <strong>Valor mensal total: R$ '+totalMensal.toLocaleString('pt-BR')+',00</strong> — cobrado ao <strong>final de cada ciclo mensal</strong>, via Pix, boleto ou cartão de crédito.</div>' +
+'<h3>CLÁUSULA 4 – DA VIGÊNCIA E RENOVAÇÃO</h3>' +
+'<p>Prazo indeterminado, renovação automática mensal.</p>' +
+'<h3>CLÁUSULA 5 – DO CANCELAMENTO</h3>' +
+'<div class="hl">Aviso prévio de <strong>15 (quinze) dias</strong>, sem multa, por e-mail ou WhatsApp. Pode ser parcial (por empresa) ou total.</div>' +
+'<h3>CLÁUSULA 5-A – DO REAJUSTE ANUAL</h3>' +
+'<p>Após 12 meses, reajuste pelo <strong>IPCA</strong> acumulado, com aviso prévio de 30 dias.</p>' +
+'<h3>CLÁUSULA 6 – DAS OBRIGAÇÕES DA CONTRATADA</h3>' +
+'<ul><li>Realizar a consultoria com diligência técnica e profissional</li><li>Manter sigilo sobre informações financeiras e contábeis</li><li>Emitir relatórios e recomendações por escrito quando solicitado</li><li>Comunicar qualquer inconsistência relevante identificada</li></ul>' +
+'<h3>CLÁUSULA 7 – DAS OBRIGAÇÕES DO CONTRATANTE</h3>' +
+'<ul><li>Fornecer acesso a documentos e informações financeiras necessárias</li><li>Manter o pagamento em dia</li><li>Informar alterações na quantidade de empresas com antecedência</li></ul>' +
+'<h3>CLÁUSULA 8 – CONFIDENCIALIDADE E LGPD</h3>' +
+'<p>Todas as informações tratadas com sigilo absoluto, conforme Lei nº 13.709/2018.</p>' +
+'<h3>CLÁUSULA 9 – FORO</h3>' +
+'<p>Comarca de Belo Horizonte/MG.</p>' +
+'<div class="sigs">' +
+  '<div class="sig">'+sigCliente+'<strong>'+c.nome+'</strong><br>CONTRATANTE<br>'+(c.local_assinatura||'Nova União/MG')+', '+((c.data_legivel||'').split(' ')[0]||hoje)+'</div>' +
+  '<div class="sig"><img src="'+carolineSig+'" style="height:65px;max-width:260px;display:block;margin-bottom:4px"><strong>Caroline Inacia Pinto</strong><br>CONTRATADA<br>CNPJ 61.934.682/0001-02</div>' +
+'</div>' +
+'<div style="text-align:center;margin-top:40px;font-size:11px;color:#aaa;border-top:1px solid #f0ede8;padding-top:14px">Documento gerado eletronicamente · Caroline Inacia Pinto · Protocolo '+c.protocolo+'</div>' +
+'</body></html>';
+
+  const win = window.open('','_blank');
+  win.document.write(html);
+  win.document.close();
+  setTimeout(()=>win.print(),900);
+}
+window.gerarPDFModal = gerarPDFModal;
+
+document.addEventListener('keydown', e => { if(e.key==='Escape') fecharModal(); });
+</script>
+</body>
+</html>
