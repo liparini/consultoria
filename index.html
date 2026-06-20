@@ -318,7 +318,7 @@ const VALOR_POR_EMPRESA = 1000;
 
 function adicionarEmpresa() {
   const id = Date.now();
-  state.empresas.push({ id, nome: '', horasDia: '' });
+  state.empresas.push({ id, nome: '' });
   renderEmpresas();
 }
 window.adicionarEmpresa = adicionarEmpresa;
@@ -345,15 +345,10 @@ function renderEmpresas() {
       <div class="empresa-card">
         <div class="empresa-num">Empresa ${i+1}</div>
         <button class="empresa-remove" onclick="removerEmpresa(${e.id})">✕</button>
-        <div class="form-row" style="margin-top:8px">
+        <div class="form-row full" style="margin-top:8px">
           <div class="form-group">
             <label>Nome da empresa <span class="req">*</span></label>
             <input type="text" placeholder="Ex: Comércio ABC Ltda" value="${e.nome}" oninput="atualizarEmpresa(${e.id}, 'nome', this.value)">
-          </div>
-          <div class="form-group">
-            <label>Horas de consultoria por dia</label>
-            <input type="number" min="1" max="12" placeholder="Ex: 2" value="${e.horasDia}" oninput="atualizarEmpresa(${e.id}, 'horasDia', this.value)">
-            <div class="form-hint">Apenas referência de escopo — não altera o valor mensal</div>
           </div>
         </div>
       </div>
@@ -430,7 +425,7 @@ function buildContract() {
   const hoje = new Date().toLocaleDateString('pt-BR');
 
   const empresasRows = state.empresas.map((e, i) =>
-    '<tr><td>' + (i+1) + '</td><td>' + e.nome + '</td><td>' + (e.horasDia ? e.horasDia + 'h/dia' : '—') + '</td><td>R$ 1.000,00/mês</td></tr>'
+    '<tr><td>' + (i+1) + '</td><td>' + e.nome + '</td><td>R$ 1.000,00/mês</td></tr>'
   ).join('');
 
   document.getElementById('contractText').innerHTML = `
@@ -444,16 +439,16 @@ function buildContract() {
 <h3>CLÁUSULA 2 – DO OBJETO</h3>
 <p>O presente contrato tem por objeto a prestação de serviços de <strong>consultoria e auditoria financeira</strong> pela CONTRATADA às empresas indicadas pelo CONTRATANTE, conforme tabela abaixo:</p>
 <table>
-<tr><th>#</th><th>Empresa</th><th>Carga horária de referência</th><th>Valor mensal</th></tr>
+<tr><th>#</th><th>Empresa</th><th>Valor mensal</th></tr>
 ${empresasRows}
 </table>
 <p>Os serviços incluem, conforme escopo definido com cada empresa: análise de demonstrações financeiras, revisão de processos contábeis e fiscais, identificação de inconsistências, recomendações de melhoria de controles internos e acompanhamento periódico dos indicadores financeiros.</p>
 
 <h3>CLÁUSULA 3 – DO VALOR E FORMA DE PAGAMENTO</h3>
-<p><strong>Valor por empresa:</strong> R$ 1.000,00 (um mil reais) por mês, independentemente da carga horária de referência informada.</p>
+<p><strong>Valor por empresa:</strong> R$ 1.000,00 (um mil reais) por mês.</p>
 <p><strong>Quantidade de empresas contratadas:</strong> ${state.empresas.length}</p>
 <div class="highlight">💳 <strong>Valor mensal total:</strong> R$ ${total.toLocaleString('pt-BR')},00 — cobrado ao <strong>final de cada ciclo mensal</strong>, via Pix, boleto ou cartão de crédito.</div>
-<p>A carga horária de referência informada para cada empresa não altera o valor cobrado, servindo apenas como parâmetro de planejamento do escopo de trabalho.</p>
+
 
 <h3>CLÁUSULA 4 – DA VIGÊNCIA E RENOVAÇÃO</h3>
 <p>O contrato vigorará por prazo indeterminado a partir da data de assinatura, renovando-se automaticamente mês a mês.</p>
@@ -497,7 +492,7 @@ ${empresasRows}
 function buildSummary() {
   const total = state.empresas.length * VALOR_POR_EMPRESA;
   const empresasRows = state.empresas.map((e) =>
-    '<div class="summary-row"><span class="summary-label">' + e.nome + (e.horasDia ? ' (' + e.horasDia + 'h/dia)' : '') + '</span><span>R$ 1.000,00/mês</span></div>'
+    '<div class="summary-row"><span class="summary-label">' + e.nome + '</span><span>R$ 1.000,00/mês</span></div>'
   ).join('');
 
   document.getElementById('summaryContent').innerHTML = `
@@ -748,7 +743,7 @@ async function finalizar() {
       email: document.getElementById('emailCliente').value,
       telefone: document.getElementById('telCliente').value,
       endereco: document.getElementById('endCliente').value,
-      empresas: state.empresas.map(e => ({ nome: e.nome, horasDia: e.horasDia })),
+      empresas: state.empresas.map(e => ({ nome: e.nome })),
       qtd_empresas: state.empresas.length,
       valor_total: 'R$ ' + total.toLocaleString('pt-BR') + ',00',
       local_assinatura: document.getElementById('localAssinatura').value || 'Nova União/MG',
