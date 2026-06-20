@@ -338,7 +338,7 @@ function abrirModal(idx) {
   text('modalTitulo', 'Contrato ' + (c.protocolo||''));
 
   const empresasRows = (c.empresas||[]).map((e,i) =>
-    '<tr><td>' + (i+1) + '</td><td>' + e.nome + '</td><td>' + (e.horasDia ? e.horasDia+'h/dia' : '—') + '</td><td>R$ 1.000,00/mês</td></tr>'
+    '<tr><td>' + (i+1) + '</td><td>' + e.nome + '</td><td>R$ 1.000,00/mês</td></tr>'
   ).join('');
 
   const campos = [
@@ -359,7 +359,7 @@ function abrirModal(idx) {
 
   document.getElementById('modalBody').innerHTML =
     campos.map(([l,v]) => '<div class="modal-field"><span class="modal-label">'+l+'</span><span class="modal-value">'+(v||'—')+'</span></div>').join('') +
-    (empresasRows ? '<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--borda)"><div style="font-size:12px;font-weight:600;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Empresas contratadas</div><table class="empresas-table"><tr><th>#</th><th>Empresa</th><th>Carga horária</th><th>Valor</th></tr>' + empresasRows + '</table></div>' : '') +
+    (empresasRows ? '<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--borda)"><div style="font-size:12px;font-weight:600;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Empresas contratadas</div><table class="empresas-table"><tr><th>#</th><th>Empresa</th><th>Valor</th></tr>' + empresasRows + '</table></div>' : '') +
     sigHtml;
 
   document.getElementById('modalOverlay').classList.add('open');
@@ -499,7 +499,7 @@ function gerarPDFModal() {
   const totalMensal = (c.qtd_empresas||0) * 1000;
 
   const empresasRows = (c.empresas||[]).map((e,i) =>
-    '<tr><td>'+(i+1)+'</td><td>'+e.nome+'</td><td>'+(e.horasDia?e.horasDia+'h/dia':'—')+'</td><td>R$ 1.000,00/mês</td></tr>'
+    '<tr><td>'+(i+1)+'</td><td>'+e.nome+'</td><td>R$ 1.000,00/mês</td></tr>'
   ).join('');
 
   const sigCliente = c.assinatura_img
@@ -534,7 +534,7 @@ function gerarPDFModal() {
 '<p><strong>CONTRATANTE:</strong> '+c.nome+', CPF/CNPJ '+c.cpf_cnpj+', e-mail '+c.email+', endereço '+c.endereco+'.</p>' +
 '<h3>CLÁUSULA 2 – DO OBJETO</h3>' +
 '<p>Prestação de serviços de consultoria e auditoria financeira para as empresas abaixo:</p>' +
-'<table><tr><th>#</th><th>Empresa</th><th>Carga horária de referência</th><th>Valor mensal</th></tr>'+empresasRows+'</table>' +
+'<table><tr><th>#</th><th>Empresa</th><th>Valor mensal</th></tr>'+empresasRows+'</table>' +
 '<h3>CLÁUSULA 3 – DO VALOR E FORMA DE PAGAMENTO</h3>' +
 '<p><strong>Valor por empresa:</strong> R$ 1.000,00/mês · <strong>Quantidade de empresas:</strong> '+(c.qtd_empresas||0)+'</p>' +
 '<div class="hl">💳 <strong>Valor mensal total: R$ '+totalMensal.toLocaleString('pt-BR')+',00</strong> — cobrado ao <strong>final de cada ciclo mensal</strong>, via Pix, boleto ou cartão de crédito.</div>' +
